@@ -1,0 +1,6 @@
+// 使用 @use 替代 @import
+@use "./common" as *;
+@use "./variable" as *;
+@use "./toolbar" as *;
+@use "./component" as *;
+@use "vxe-table/styles/index" as *;
