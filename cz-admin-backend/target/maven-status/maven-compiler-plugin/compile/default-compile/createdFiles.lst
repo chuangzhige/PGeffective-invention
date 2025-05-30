@@ -1,0 +1,9 @@
+com\cz\admin\entity\User.class
+com\cz\admin\entity\User$Role.class
+com\cz\admin\service\FeishuService.class
+com\cz\admin\config\CorsConfig.class
+com\cz\admin\CzAdminBackendApplication.class
+com\cz\admin\repository\UserRepository.class
+META-INF\spring-configuration-metadata.json
+com\cz\admin\config\FeishuConfig.class
+com\cz\admin\controller\FeishuController.class

@@ -1,0 +1,180 @@
+# 飞书API集成使用说明
+
+## 🎯 解决的问题
+
+之前前端直接调用飞书API时遇到的**CORS跨域问题**已经通过后端代理完全解决。
+
+## 🚀 快速开始
+
+### 1. 启动后端服务
+
+**方法一：使用批处理脚本（推荐）**
+```bash
+# 双击运行
+start-backend.bat
+```
+
+**方法二：命令行启动**
+```bash
+cd cz-admin-backend
+mvn spring-boot:run
+```
+
+**方法三：IDE运行**
+- 打开 `cz-admin-backend/src/main/java/com/cz/admin/CzAdminBackendApplication.java`
+- 运行main方法
+
+### 2. 验证服务启动
+
+访问以下链接确认服务正常：
+- 健康检查：http://localhost:8080/api/feishu/health
+- 配置信息：http://localhost:8080/api/feishu/config  
+- 测试接口：http://localhost:8080/api/feishu/test
+
+### 3. 使用调试工具
+
+1. 启动前端项目：
+```bash
+cd cz-admin-master
+npm run dev
+```
+
+2. 访问调试页面：http://localhost:5175/#/feishu/debug
+
+3. 在调试页面：
+   - 选择"使用后端代理（推荐）"
+   - 点击"测试后端连接"
+   - 点击"测试代理请求"
+
+## 📡 API接口说明
+
+### 后端代理接口
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/feishu/test` | GET | 测试连接和配置 |
+| `/api/feishu/tenant-access-token` | POST | 获取访问令牌 |
+| `/api/feishu/user/{userId}` | GET | 获取用户信息 |
+| `/api/feishu/attendance/records` | POST | 获取考勤记录 |
+| `/api/feishu/health` | GET | 健康检查 |
+| `/api/feishu/config` | GET | 获取配置信息 |
+
+### 前端调用示例
+
+```typescript
+import { feishuAPI } from '@/utils/feishu';
+
+// 测试连接
+const result = await feishuAPI.testConnection();
+
+// 获取令牌
+const tokenResult = await feishuAPI.getTenantAccessToken();
+
+// 获取用户信息
+const userInfo = await feishuAPI.getUserInfoByOpenId('ou_xxxxxxxxx');
+
+// 获取考勤记录
+const attendance = await feishuAPI.getAttendanceRecords(
+  'ou_xxxxxxxxx', 
+  '2024-01-01', 
+  '2024-01-31'
+);
+```
+
+## ⚙️ 配置说明
+
+### 飞书应用配置
+
+配置文件：`cz-admin-backend/src/main/resources/application.yml`
+
+```yaml
+feishu:
+  app-id: cli_a8b80b73f6bc5013
+  app-secret: osgCKn8CUYNU3H14fY3X53RQfi5UkxKU
+  base-url: https://open.feishu.cn
+```
+
+### 前端配置
+
+配置文件：`cz-admin-master/src/config/feishu.ts`
+
+```typescript
+export const feishuConfig: FeishuConfig = {
+  app_id: "cli_a8b80b73f6bc5013",
+  app_secret: "osgCKn8CUYNU3H14fY3X53RQfi5UkxKU",
+  base_url: "https://open.feishu.cn/"
+};
+```
+
+## 🛠️ 故障排除
+
+### 常见错误及解决方法
+
+1. **无法连接后端服务**
+   - 检查后端是否启动在 8080 端口
+   - 确认防火墙没有阻挡端口
+
+2. **Token获取失败**
+   - 检查飞书应用配置是否正确
+   - 确认网络连接正常
+   - 验证App ID和App Secret
+
+3. **CORS错误**
+   - 确保使用后端代理而非直接调用飞书API
+   - 在调试页面选择"使用后端代理"
+
+4. **403/401权限错误**
+   - 检查飞书应用权限配置
+   - 确认应用已获得考勤相关权限
+
+### 日志查看
+
+后端日志会显示详细的API调用信息：
+```
+2024-01-01 10:00:00 [main] INFO  com.cz.admin.service.FeishuService - 获取新的tenant access token
+2024-01-01 10:00:00 [main] INFO  com.cz.admin.service.FeishuService - 请求URL: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+2024-01-01 10:00:01 [main] INFO  com.cz.admin.service.FeishuService - 成功获取tenant access token，有效期: 7200 秒
+```
+
+## 🔧 开发说明
+
+### 项目结构
+
+```
+cz-admin-backend/
+├── src/main/java/com/cz/admin/
+│   ├── config/FeishuConfig.java      # 飞书配置类
+│   ├── controller/FeishuController.java  # 控制器
+│   ├── service/FeishuService.java    # 服务类
+│   └── CzAdminBackendApplication.java
+├── src/main/resources/
+│   └── application.yml               # 应用配置
+└── pom.xml                          # Maven依赖
+
+cz-admin-master/
+├── src/config/feishu.ts             # 前端配置
+├── src/utils/feishu.ts              # API工具类
+└── src/views/feishu/debug/          # 调试页面
+```
+
+### Token缓存机制
+
+后端服务自动缓存租户访问令牌：
+- Token有效期内复用缓存
+- 提前10分钟自动刷新
+- 异常时自动重新获取
+
+## 📚 参考资料
+
+- [飞书开放平台文档](https://open.feishu.cn/document/)
+- [考勤API文档](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_daily_shift/query)
+- [Spring Boot文档](https://spring.io/projects/spring-boot)
+
+## 🎉 完成
+
+现在你可以：
+1. 无CORS问题地调用飞书API
+2. 通过调试页面测试所有功能
+3. 在项目中使用飞书API获取用户和考勤数据
+
+享受顺畅的飞书API集成体验！🚀 

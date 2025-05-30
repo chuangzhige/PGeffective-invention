@@ -1,0 +1,58 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: cz-admin-backend
+  profiles:
+    active: dev
+  
+  # 数据库配置
+  datasource:
+    # 开发环境使用H2内存数据库
+    url: jdbc:h2:mem:czadmin;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+    
+    # 生产环境使用MySQL (通过环境变量配置)
+    # url: ${DB_URL:jdbc:mysql://localhost:3306/cz_admin?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8}
+    # driver-class-name: com.mysql.cj.jdbc.Driver
+    # username: ${DB_USERNAME:root}
+    # password: ${DB_PASSWORD:123456}
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update  # 自动更新表结构
+    show-sql: true     # 显示SQL语句
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  
+  # H2控制台配置 (仅开发环境)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+# 飞书应用配置
+feishu:
+  app-id: cli_a8b80b73f6bc5013
+  app-secret: osgCKn8CUYNU3H14fY3X53RQfi5UkxKU
+  base-url: https://open.feishu.cn
+  
+# 日志配置
+logging:
+  level:
+    com.cz.admin: DEBUG
+    com.lark.oapi: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n" 

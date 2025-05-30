@@ -1,0 +1,30 @@
+{
+  "groups": [
+    {
+      "name": "feishu",
+      "type": "com.cz.admin.config.FeishuConfig",
+      "sourceType": "com.cz.admin.config.FeishuConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "feishu.app-id",
+      "type": "java.lang.String",
+      "description": "飞书应用ID",
+      "sourceType": "com.cz.admin.config.FeishuConfig"
+    },
+    {
+      "name": "feishu.app-secret",
+      "type": "java.lang.String",
+      "description": "飞书应用密钥",
+      "sourceType": "com.cz.admin.config.FeishuConfig"
+    },
+    {
+      "name": "feishu.base-url",
+      "type": "java.lang.String",
+      "description": "飞书API基础URL",
+      "sourceType": "com.cz.admin.config.FeishuConfig"
+    }
+  ],
+  "hints": []
+}
