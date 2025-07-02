@@ -24,6 +24,4 @@ echo 正确的命令格式: mvn spring-boot:run (注意冒号)
 echo 按 Ctrl+C 停止服务
 echo.
 
-mvn spring-boot:run
-
-pause 
+mvn spring-boot:run 

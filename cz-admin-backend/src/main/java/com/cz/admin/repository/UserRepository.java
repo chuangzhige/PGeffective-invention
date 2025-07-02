@@ -24,26 +24,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * 根据邮箱查找用户
      */
     Optional<User> findByEmail(String email);
-    
-    /**
-     * 根据飞书OpenId查找用户
-     */
-    Optional<User> findByFeishuOpenId(String feishuOpenId);
+
     
     /**
      * 根据飞书用户ID查找用户
      */
     Optional<User> findByFeishuUserId(String feishuUserId);
-    
-    /**
-     * 根据角色查找用户列表
-     */
-    List<User> findByRole(User.Role role);
-    
-    /**
-     * 根据激活状态查找用户列表
-     */
-    List<User> findByIsActivated(Boolean isActivated);
     
     /**
      * 检查用户名是否存在
@@ -58,17 +44,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * 检查飞书OpenId是否存在
      */
-    boolean existsByFeishuOpenId(String feishuOpenId);
     
     /**
      * 根据用户名模糊查询
      */
     @Query("SELECT u FROM User u WHERE u.username LIKE %:keyword% OR u.realName LIKE %:keyword% OR u.email LIKE %:keyword%")
     List<User> searchByKeyword(@Param("keyword") String keyword);
-    
-    /**
-     * 获取用户统计信息
-     */
-    @Query("SELECT u.role, COUNT(u) FROM User u GROUP BY u.role")
-    List<Object[]> getUserRoleStatistics();
 } 

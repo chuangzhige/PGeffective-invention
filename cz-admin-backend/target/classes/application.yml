@@ -43,9 +43,9 @@ spring:
 
 # 飞书应用配置
 feishu:
-  app-id: cli_a8b80b73f6bc5013
-  app-secret: osgCKn8CUYNU3H14fY3X53RQfi5UkxKU
-  base-url: https://open.feishu.cn
+  app-id: ${FEISHU_APP_ID:cli_a8b80b73f6bc5013}
+  app-secret: ${FEISHU_APP_SECRET:osgCKn8CUYNU3H14fY3X53RQfi5UkxKU}
+  base-url: ${FEISHU_BASE_URL:https://open.feishu.cn}
   
 # 日志配置
 logging:

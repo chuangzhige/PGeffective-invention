@@ -14,21 +14,32 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         
-        // 允许所有来源（开发环境）
-        config.addAllowedOriginPattern("*");
+        // 开发环境：允许本地开发端口
+        config.addAllowedOriginPattern("http://localhost:*");
+        config.addAllowedOriginPattern("http://127.0.0.1:*");
+        config.addAllowedOriginPattern("https://localhost:*");
         
-        // 允许所有HTTP方法
-        config.addAllowedMethod("*");
+        // 生产环境：可以添加具体的域名
+        // config.addAllowedOriginPattern("https://yourdomain.com");
         
-        // 允许所有请求头
+        // 允许的HTTP方法
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
+        config.addAllowedMethod("PATCH");
+        
+        // 允许的请求头
         config.addAllowedHeader("*");
         
-        // 允许发送Cookie
+        // 允许发送Cookie和认证信息
         config.setAllowCredentials(true);
         
-        // 预检请求的缓存时间
+        // 预检请求的缓存时间（1小时）
         config.setMaxAge(3600L);
         
+        // 注册CORS配置
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         

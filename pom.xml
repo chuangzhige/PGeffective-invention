@@ -12,7 +12,12 @@
 
     <name>CZ Admin</name>
     <description>CZ Admin Management System</description>
-
+<repositories>
+        <repository>
+            <id>Central Repository</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -20,12 +25,19 @@
     </properties>
 
     <dependencies>
-        <!-- 飞书开放平台 SDK -->
+       <groupId>com.larksuite.oapi</groupId>
+  <artifactId>oapi-sdk</artifactId>
+  <version>2.4.19</version>
         <dependency>
             <groupId>com.lark.oapi</groupId>
             <artifactId>lark-open-sdk</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.15.2</version>
+</dependency>
     </dependencies>
 
     <build>

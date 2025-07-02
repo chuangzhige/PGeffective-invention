@@ -9,7 +9,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/feishu")
-@CrossOrigin(origins = "*")
 public class FeishuController {
     
     @Autowired
@@ -55,22 +54,10 @@ public class FeishuController {
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * 获取考勤记录 (代理接口)
-     */
-    @PostMapping("/attendance/records")
-    public ResponseEntity<Map<String, Object>> getAttendanceRecords(
-            @RequestParam String userId,
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
-        
-        // 自动使用默认员工类型（正式员工），前端无需传递
-        Map<String, Object> result = feishuService.getAttendanceRecords(userId, startDate, endDate, 1);
-        return ResponseEntity.ok(result);
-    }
+ 
 
     /**
-     * 获取考勤结果记录 - 直接使用用户ID，返回1条记录
+     * 获取考勤结果记录 - 根据日期范围获取对应天数的考勤记录
      */
     @PostMapping("/attendance/results")
     public ResponseEntity<Map<String, Object>> getAttendanceResults(
@@ -78,7 +65,7 @@ public class FeishuController {
             @RequestParam String startDate,
             @RequestParam String endDate) {
         
-        // 直接使用传入的用户ID，不进行任何转换，限制返回1条记录
+        // 根据日期范围获取用户考勤结果，返回天数与日期范围一致的记录
         Map<String, Object> result = feishuService.getAttendanceResults(userId, startDate, endDate);
         return ResponseEntity.ok(result);
     }
@@ -125,9 +112,7 @@ public class FeishuController {
         Map<String, Object> employeeTypes = new HashMap<>();
         employeeTypes.put("1", "正式员工");
         employeeTypes.put("2", "实习生");
-        employeeTypes.put("3", "外包");
-        employeeTypes.put("4", "劳务");
-        employeeTypes.put("5", "顾问");
+
         
         Map<String, Object> response = new HashMap<>();
         response.put("employee_types", employeeTypes);
@@ -148,5 +133,86 @@ public class FeishuController {
         health.put("service", "feishu-integration");
         health.put("proxy", "enabled");
         return ResponseEntity.ok(health);
+    }
+
+    /**
+     * 获取全员考勤数据 - 新增接口
+     */
+    @GetMapping("/attendance/all")
+    public ResponseEntity<Map<String, Object>> getAllAttendanceData(
+            @RequestParam(required = false, defaultValue = "") String date) {
+        
+        try {
+            // 如果没有提供日期，使用今天
+            if (date.isEmpty()) {
+                date = java.time.LocalDate.now().toString();
+            }
+            
+            Map<String, Object> result = feishuService.getAllAttendanceData(date);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "获取全员考勤数据失败: " + e.getMessage());
+            response.put("error_type", "ServerError");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * 批量获取多个用户的考勤结果
+     */
+    @PostMapping("/attendance/batch")
+    public ResponseEntity<Map<String, Object>> getBatchAttendanceResults(
+            @RequestBody Map<String, Object> requestBody) {
+        
+        try {
+            @SuppressWarnings("unchecked")
+            java.util.List<String> userIds = (java.util.List<String>) requestBody.get("userIds");
+            String startDate = (String) requestBody.get("startDate");
+            String endDate = (String) requestBody.get("endDate");
+            
+            if (userIds == null || userIds.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "用户ID列表不能为空");
+                return ResponseEntity.ok(response);
+            }
+            
+            Map<String, Object> result = feishuService.getBatchAttendanceResults(userIds, startDate, endDate);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "批量获取考勤数据失败: " + e.getMessage());
+            response.put("error_type", "ServerError");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * 获取考勤组列表
+     */
+    @GetMapping("/attendance/groups")
+    public ResponseEntity<Map<String, Object>> getAttendanceGroups(
+            @RequestParam(required = false) Integer pageSize) {
+        Map<String, Object> result = feishuService.getAttendanceGroups(pageSize);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 获取考勤组成员列表
+     */
+    @GetMapping("/attendance/groups/{groupId}/users")
+    public ResponseEntity<Map<String, Object>> getAttendanceGroupMembers(
+            @PathVariable String groupId,
+            @RequestParam(required = false) String employeeType,
+            @RequestParam(required = false) String deptType,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Integer memberClockType) {
+        
+        Map<String, Object> result = feishuService.getAttendanceGroupMembers(
+            groupId, employeeType, deptType, pageSize, memberClockType);
+        return ResponseEntity.ok(result);
     }
 } 

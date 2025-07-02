@@ -1,5 +1,7 @@
 com\cz\admin\entity\User.class
 com\cz\admin\entity\User$Role.class
+com\cz\admin\entity\UserProfileDTO.class
+com\cz\admin\config\WebConfig.class
 com\cz\admin\service\FeishuService.class
 com\cz\admin\config\CorsConfig.class
 com\cz\admin\CzAdminBackendApplication.class
